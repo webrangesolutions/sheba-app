@@ -19,4 +19,6 @@ class RouteHelper {
   static const editProfileRoute = '/EditProfileScreen';
   static const changePasswordRoute = '/ChangePasswordScreen';
   static const forgetPasswordScreen = '/forgetPasswordScreen';
+
+  static String verificationId='';
 }

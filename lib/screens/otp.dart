@@ -1,8 +1,14 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sheba_financial/models/user_model.dart';
+import 'package:sheba_financial/screens/home.dart';
 import 'package:sheba_financial/utils/color_constants.dart';
 import 'package:sheba_financial/utils/route_helper.dart';
+
+import 'dashboard.dart';
 
 class OtpScreen extends StatefulWidget {
   @override
@@ -77,37 +83,38 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               const Text(
                 'Please Enter OTP Verification',
                 style: TextStyle(fontSize: 30, color: Colors.black87),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
-                'Code was sent to +254 7085689',
-                style: TextStyle(fontSize: 16),
+                'Code was sent to ${UserModel.loggedinUser!.phoneNo}',
+                style: const TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'The code will expire in ',
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
                     '${_counter ~/ 60}:${(_counter % 60).toString().padLeft(2, '0')}',
-                    style: TextStyle(fontSize: 16, color: Colors.red),
+                    style: const TextStyle(fontSize: 16, color: Colors.red),
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: PinCodeTextField(
                   appContext: context,
-                  length: 4,
+                  controller: otpController,
+                  length: 6,
                   obscureText: true,
                   animationType: AnimationType.fade,
                   pinTheme: PinTheme(
@@ -120,10 +127,10 @@ class _OtpScreenState extends State<OtpScreen> {
                     inactiveColor: Colors.grey,
                     borderWidth: 0,
                     inactiveFillColor: Colors.grey,
-                    fieldWidth: 55,
+                    fieldWidth: mediaWidth * 0.12,
                     activeFillColor: Colors.grey,
                   ),
-                  animationDuration: Duration(milliseconds: 300),
+                  animationDuration: const Duration(milliseconds: 300),
                   enableActiveFill: true,
                   onCompleted: (v) {
                     print("Completed");
@@ -140,16 +147,34 @@ class _OtpScreenState extends State<OtpScreen> {
                   },
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Didnt receive an OTP?',
                     style: TextStyle(fontSize: 14),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      await FirebaseAuth.instance.verifyPhoneNumber(
+                        phoneNumber: "+923315694832",
+                        verificationCompleted: (phoneAuthCredential) {},
+                        verificationFailed: (error) {},
+                        codeSent: (verificationId, forceResendingToken) {
+                          RouteHelper.verificationId = verificationId;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return OtpScreen();
+                              },
+                            ),
+                          );
+                        },
+                        codeAutoRetrievalTimeout: (verificationId) {},
+                      );
+                    },
                     child: Row(
                       children: const [
                         Icon(
@@ -177,15 +202,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   width: mediaWidth * 0.8,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          RouteHelper.loginRoute,
-                          (Route<dynamic> route) => false);
-                      Navigator.pushNamed(context, RouteHelper.loginRoute);
+                      verifyOtp();
                     },
-                    child: Text(
-                      'Verify and Create Account',
-                      style: TextStyle(color: Colors.white),
-                    ),
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
                       backgroundColor: MaterialStateProperty.all(
@@ -196,6 +214,10 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                       ),
                     ),
+                    child: const Text(
+                      'Verify and Create Account',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -204,5 +226,53 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       ),
     );
+  }
+
+  void verifyOtp() async {
+    UserModel userModel = UserModel.loggedinUser!;
+    UserCredential? credentials;
+    try {
+      PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+        verificationId: RouteHelper.verificationId,
+        smsCode: otpController.text.trim(),
+      );
+      credentials =
+          await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
+    } on FirebaseAuthException catch (ex) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.secondaryColor,
+          duration: const Duration(seconds: 1),
+          content: Text("${ex.message}"),
+        ),
+      );
+    }
+    if (credentials != null) {
+      userModel.isVerified = true;
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userModel.uid)
+          .set(userModel.toMap())
+          .then(
+        (value) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppColors.secondaryColor,
+              duration: Duration(seconds: 1),
+              content: Text("OTP verified sucessfully!"),
+            ),
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const DashboardScreen();
+              },
+            ),
+          );
+        },
+      );
+    }
   }
 }

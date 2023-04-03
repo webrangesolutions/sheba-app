@@ -1,16 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sheba_financial/screens/login.dart';
+import 'package:sheba_financial/screens/otp.dart';
+import '../models/user_model.dart';
 import '../utils/color_constants.dart';
 import '../utils/route_helper.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController companyIdController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   bool _passwordVisible = false;
+  String countryCode = '+92';
 
   @override
   Widget build(BuildContext context) {
@@ -38,29 +50,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fontSize: 16.0,
                 ),
               ),
-              const TextField(
-                style: TextStyle(
+              TextField(
+                controller: nameController,
+                style: const TextStyle(
                   color: AppColors.secondaryColor, // Set the text color to red
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               const Text(
                 'Email Address',
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
               ),
-              const TextField(
-                style: TextStyle(
+              TextField(
+                controller: emailController,
+                style: const TextStyle(
                   color: AppColors.secondaryColor, // Set the text color to red
                 ),
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
@@ -73,11 +87,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fontSize: 16.0,
                 ),
               ),
-              const TextField(
-                style: TextStyle(
+              TextField(
+                controller: companyIdController,
+                style: const TextStyle(
                   color: AppColors.secondaryColor, // Set the text color to red
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.black),
                   ),
@@ -103,33 +118,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       child: InternationalPhoneNumberInput(
-                        textStyle: TextStyle(color: AppColors.secondaryColor),
-                        initialValue: PhoneNumber(isoCode: 'US'),
+                        textStyle:
+                            const TextStyle(color: AppColors.secondaryColor),
+                        initialValue: PhoneNumber(isoCode: 'PK'),
                         onInputChanged: (PhoneNumber number) {
-                          print(number.phoneNumber);
+                          print('code: ${number.phoneNumber}');
+                          countryCode = number.phoneNumber ?? '+92';
                         },
                         onInputValidated: (bool value) {
-                          print(value);
+                          print('validated: $value');
                         },
-                        selectorConfig: SelectorConfig(
+                        selectorConfig: const SelectorConfig(
                           selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
                         ),
                         ignoreBlank: false,
                         autoValidateMode: AutovalidateMode.disabled,
-                        selectorTextStyle: TextStyle(color: Colors.black),
+                        selectorTextStyle: const TextStyle(color: Colors.black),
                         formatInput: true,
-                        keyboardType: TextInputType.numberWithOptions(
+                        keyboardType: const TextInputType.numberWithOptions(
                             signed: true, decimal: true),
-                        onSaved: (PhoneNumber number) {},
+                        onFieldSubmitted: (value) {
+                          // print(value);
+                        },
+                        onSaved: (PhoneNumber number) {
+                          // print(number.phoneNumber);
+                        },
                       ),
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Expanded(
                     flex: 2,
                     child: TextField(
+                      controller: phoneController,
+                      // maxLength: 10,
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
+                        hintText: '33xxxxxxxx',
+                        hintStyle: TextStyle(
+                          fontSize: 16.0,
+
+                          color: Colors.black45, // Set the text color to red
+                        ),
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.black),
                         ),
@@ -148,6 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               TextField(
+                controller: passwordController,
                 obscureText: !_passwordVisible,
                 decoration: InputDecoration(
                   border: const UnderlineInputBorder(
@@ -168,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Padding(
@@ -177,21 +208,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RouteHelper.otpRoute);
+                      checkValues();
                     },
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(color: Colors.white),
-                    ),
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
                       backgroundColor: MaterialStateProperty.all(
-                          Color.fromARGB(255, 32, 131, 37)),
+                          const Color.fromARGB(255, 32, 131, 37)),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -200,6 +231,134 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void checkValues() {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String name = nameController.text.trim();
+    String companyId = companyIdController.text.trim();
+    String phoneNo = phoneController.text.trim();
+
+    if (email.isEmpty ||
+        password.isEmpty ||
+        name.isEmpty ||
+        companyId.isEmpty ||
+        phoneNo.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: AppColors.secondaryColor,
+          duration: Duration(seconds: 1),
+          content: Text("Please fill all the fields!"),
+        ),
+      );
+    }
+    // else if (password != cPassword) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       backgroundColor: Colors.blueGrey,
+    //       duration: Duration(seconds: 1),
+    //       content: Text("Passwords donot match!"),
+    //     ),
+    //   );
+    // }
+    else {
+      signUp(
+        email: email,
+        password: password,
+        companyId: companyId,
+        name: name,
+        phoneNo: phoneNo,
+      );
+    }
+  }
+
+  void signUp({
+    required String email,
+    required String password,
+    required String companyId,
+    required String name,
+    required String phoneNo,
+  }) async {
+    UserCredential? credentials;
+
+    try {
+      credentials = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (ex) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.secondaryColor,
+          duration: const Duration(seconds: 1),
+          content: Text(ex.code.toString()),
+        ),
+      );
+    }
+
+    if (credentials != null) {
+      String uid = credentials.user!.uid;
+      UserModel newUser = UserModel(
+        uid: uid,
+        role: 'user',
+        email: email,
+        fullName: name,
+        isVerified: false,
+        profilePic:
+            "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fone-person&psig=AOvVaw3FoJMfPBL3JBB8qtDn-E-d&ust=1680599721582000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCMjOgP2vjf4CFQAAAAAdAAAAABAE",
+        phoneNo: countryCode + phoneNo,
+        companyId: companyId,
+      );
+      UserModel.loggedinUser = newUser;
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .set(newUser.toMap())
+          .then(
+        (value) {
+          verifyPhone(newUser.phoneNo);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppColors.secondaryColor,
+              duration: Duration(seconds: 1),
+              content: Text("New user created!"),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  void navigate() {
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const LoginScreen();
+        },
+      ),
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return OtpScreen();
+        },
+      ),
+    );
+  }
+
+  void verifyPhone(number) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: number,
+      verificationCompleted: (phoneAuthCredential) {},
+      verificationFailed: (error) {},
+      codeSent: (verificationId, forceResendingToken) {
+        RouteHelper.verificationId = verificationId;
+        navigate();
+      },
+      codeAutoRetrievalTimeout: (verificationId) {},
     );
   }
 }

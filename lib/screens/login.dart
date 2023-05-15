@@ -3,9 +3,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sheba_financial/screens/dashboard.dart';
+import 'package:sheba_financial/screens/otp.dart';
 import 'package:sheba_financial/utils/color_constants.dart';
 
+import '../helpers/ui_helper.dart';
 import '../models/user_model.dart';
 import '../utils/route_helper.dart';
 
@@ -136,19 +139,21 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextButton(
-                  onPressed: () {
+              GestureDetector(
+                  onTap: () {
                     Navigator.pushNamed(
                         context, RouteHelper.forgetPasswordScreen);
                   },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Colors.black),
+                  child: const Center(
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   )),
               const SizedBox(
                 height: 15,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, RouteHelper.signUpRoute);
                 },
@@ -190,13 +195,20 @@ class _LoginScreenState extends State<LoginScreen> {
   void logIn(String email, String password) async {
     UserCredential? credentials;
 
+    UIHelper.showLoadingDialog(context, "Logging In..");
+
     try {
       credentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      String accessToken = await credentials.user!.getIdToken();
+
+      // Use the access token as needed
+      print('Access token: $accessToken');
     } on FirebaseAuthException catch (ex) {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: AppColors.secondaryColor,
           duration: const Duration(seconds: 1),
           content: Text(ex.message.toString()),
         ),
@@ -211,6 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
       UserModel userModel =
           UserModel.fromMap(userData.data() as Map<String, dynamic>);
       UserModel.loggedinUser = userModel;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('onboarding', false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: AppColors.secondaryColor,
@@ -218,15 +232,39 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text("Login successfull!"),
         ),
       );
-      Navigator.popUntil(context, (route) => route.isFirst);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return const DashboardScreen();
-          },
-        ),
-      );
+      if (userModel.isVerified ?? true) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const DashboardScreen();
+            },
+          ),
+        );
+      } else {
+        verifyPhone(userModel.phoneNo);
+      }
     }
+  }
+
+  void verifyPhone(String? phoneNo) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNo,
+      verificationCompleted: (phoneAuthCredential) {},
+      verificationFailed: (error) {},
+      codeSent: (verificationId, forceResendingToken) {
+        RouteHelper.verificationId = verificationId;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return OtpScreen();
+            },
+          ),
+        );
+      },
+      codeAutoRetrievalTimeout: (verificationId) {},
+    );
   }
 }

@@ -155,7 +155,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     'Didnt receive an OTP?',
                     style: TextStyle(fontSize: 14),
                   ),
-                  InkWell(
+                  GestureDetector(
                     onTap: () async {
                       await FirebaseAuth.instance.verifyPhoneNumber(
                         phoneNumber: "+923315694832",

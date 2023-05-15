@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,41 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAlbd3TW9f8pTXKS_rIvgSfjnxPqG61Dv8',
-    appId: '1:43832340945:web:d086f9aac8cb225ffeb0f0',
-    messagingSenderId: '43832340945',
-    projectId: 'sheba-ce465',
-    authDomain: 'sheba-ce465.firebaseapp.com',
-    storageBucket: 'sheba-ce465.appspot.com',
-    measurementId: 'G-CNHPJ02EXS',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBKm6O6ldNgRvLMtizlE5VPkv3mq8NBCkw',
-    appId: '1:43832340945:android:0742923b034ae15bfeb0f0',
-    messagingSenderId: '43832340945',
-    projectId: 'sheba-ce465',
-    storageBucket: 'sheba-ce465.appspot.com',
+    apiKey: 'AIzaSyAQThHIhA3mhvQGfEroNnpwJTecYH-qko0',
+    appId: '1:49347299643:android:7611cb2977970d34b9cf1e',
+    messagingSenderId: '49347299643',
+    projectId: 'sheba-app-f5fbd',
+    storageBucket: 'sheba-app-f5fbd.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAbIkJwEVWFmM8XTGrnBEE-DPP7FmWg3w0',
-    appId: '1:43832340945:ios:b98cb6a65184a5f0feb0f0',
-    messagingSenderId: '43832340945',
-    projectId: 'sheba-ce465',
-    storageBucket: 'sheba-ce465.appspot.com',
-    iosClientId: '43832340945-g4oh8hjt5g10dic5b0m0n6dnm87njcnp.apps.googleusercontent.com',
-    iosBundleId: 'com.example.shebaFinancial',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAbIkJwEVWFmM8XTGrnBEE-DPP7FmWg3w0',
-    appId: '1:43832340945:ios:b98cb6a65184a5f0feb0f0',
-    messagingSenderId: '43832340945',
-    projectId: 'sheba-ce465',
-    storageBucket: 'sheba-ce465.appspot.com',
-    iosClientId: '43832340945-g4oh8hjt5g10dic5b0m0n6dnm87njcnp.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBmdcWTKkAwd26vzqwVXcppSyj3J6GMkBY',
+    appId: '1:49347299643:ios:4df13fee6e62e587b9cf1e',
+    messagingSenderId: '49347299643',
+    projectId: 'sheba-app-f5fbd',
+    storageBucket: 'sheba-app-f5fbd.appspot.com',
+    iosClientId: '49347299643-2hkr04k2m0j4i0mvbdp1difiqdv9rvbj.apps.googleusercontent.com',
     iosBundleId: 'com.example.shebaFinancial',
   );
 }

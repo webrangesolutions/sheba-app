@@ -4,6 +4,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sheba_financial/screens/login.dart';
 import 'package:sheba_financial/screens/otp.dart';
+import '../helpers/ui_helper.dart';
 import '../models/user_model.dart';
 import '../utils/color_constants.dart';
 import '../utils/route_helper.dart';
@@ -282,11 +283,13 @@ class RegisterScreenState extends State<RegisterScreen> {
     required String phoneNo,
   }) async {
     UserCredential? credentials;
+    UIHelper.showLoadingDialog(context, "Signing up..");
 
     try {
       credentials = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (ex) {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppColors.secondaryColor,
@@ -303,9 +306,9 @@ class RegisterScreenState extends State<RegisterScreen> {
         role: 'user',
         email: email,
         fullName: name,
-        isVerified: false,
+        isVerified: true,
         profilePic:
-            "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fone-person&psig=AOvVaw3FoJMfPBL3JBB8qtDn-E-d&ust=1680599721582000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCMjOgP2vjf4CFQAAAAAdAAAAABAE",
+            "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=iPFtOK-2xImeMHaZGUsvZ8HoF2azZ1Q6LYOXfg5sR8I=",
         phoneNo: countryCode + phoneNo,
         companyId: companyId,
       );

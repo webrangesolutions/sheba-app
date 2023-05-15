@@ -189,7 +189,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           ],
                         ),
                         Spacer(),
-                        InkWell(
+                        GestureDetector(
                           onTap: () {
                             _showBottomSheet(context, _users[index]);
                           },

@@ -46,7 +46,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
             child: Container(
               color: Colors.black.withOpacity(0.8),
               child: Center(
-                child: Image.asset(
+                child: Image.network(
                   widget.imagePath,
                   fit: BoxFit.contain,
                 ),

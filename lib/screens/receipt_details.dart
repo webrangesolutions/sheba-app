@@ -1,32 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sheba_financial/models/recipt_model.dart';
 import 'package:sheba_financial/screens/receipt_view.dart';
 import 'package:sheba_financial/utils/color_constants.dart';
 
+import '../helpers/ui_helper.dart';
+import 'dashboard.dart';
+
 class ReceiptDetailsScreen extends StatefulWidget {
+  final ReciptModel recipt;
+
+  const ReceiptDetailsScreen({super.key, required this.recipt});
   @override
   _ReceiptDetailsScreenState createState() => _ReceiptDetailsScreenState();
 }
 
 class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
-  List<String> _categoryItems = [
-    'Food',
-    'Transport',
-    'Entertainment',
-    'Meal & Entertainment',
-    'Others'
-  ];
-  List<String> _currencyItems = ['NGN', 'USD', 'XAF', 'EUR', 'GBP'];
-  List<String> _paymentItems = [
-    'Card',
-    'Cash',
-    'Bank Transfer',
-    'Mobile Money',
-    'Others'
-  ];
-  String _currency = 'NGN';
-  String _category = 'Food';
-  String _payment = 'Card';
-
   @override
   Widget build(BuildContext context) {
     final mediaHeight = MediaQuery.of(context).size.height;
@@ -60,14 +49,14 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ReceiptScreen('assets/images/receipt_details.png')),
+                      ReceiptScreen(widget.recipt.image ?? '')),
             );
           },
           child: Container(
             height: MediaQuery.of(context).size.height * 0.3,
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.8),
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
               ),
@@ -80,16 +69,16 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
             child: Padding(
               padding: const EdgeInsets.only(
                   bottom: 0, left: 50, right: 50, top: 60),
-              child: Image.asset(
-                'assets/images/receipt_details.png',
+              child: Image.network(
+                widget.recipt.image ?? '',
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text(
             'Merchant',
             style: TextStyle(fontSize: 14),
@@ -98,8 +87,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'Chicken Republic',
-            style: TextStyle(
+            widget.recipt.merchant ?? '',
+            style: const TextStyle(
               fontSize: 16,
               decorationThickness: 2,
               color: AppColors.secondaryColor,
@@ -112,8 +101,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
           indent: 16.0,
           endIndent: 16.0,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Text(
             'Date',
             style: TextStyle(fontSize: 14),
@@ -122,8 +111,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'July 23,2020',
-            style: TextStyle(
+            widget.recipt.createdAt ?? '',
+            style: const TextStyle(
               fontSize: 16,
               decorationThickness: 2,
               color: AppColors.secondaryColor,
@@ -141,14 +130,14 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Currency',
                 style: TextStyle(fontSize: 14),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 60,
               ),
-              Text(
+              const Text(
                 'Total',
                 style: TextStyle(fontSize: 14),
               ),
@@ -161,32 +150,16 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
               Row(
                 children: [
                   Flexible(
-                      flex: 0,
-                      child: DropdownButton(
-                        underline: Container(
-                          height: 0,
-                          width: 0,
-                        ),
-                        value: _currency,
-                        style: TextStyle(
-                            color: AppColors.secondaryColor, fontSize: 16),
-                        items: _currencyItems
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        onChanged: ((value) {
-                          setState(() {
-                            _currency = value.toString();
-                          });
-                        }),
-                      )),
+                    flex: 0,
+                    child: Text(
+                      widget.recipt.curency ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        decorationThickness: 2,
+                        color: AppColors.secondaryColor,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(width: mediaWidth * 0.18),
@@ -194,8 +167,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
                 child: Row(
                   children: [
                     Text(
-                      '1,960.76',
-                      style: TextStyle(
+                      widget.recipt.totalBill ?? "",
+                      style: const TextStyle(
                         fontSize: 16,
                         color: AppColors.secondaryColor,
                       ),
@@ -229,11 +202,21 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Text(
             'Description',
             style: TextStyle(fontSize: 14),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Text(
+            widget.recipt.description ?? "",
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.secondaryColor,
+            ),
           ),
         ),
         const Divider(
@@ -242,8 +225,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
           indent: 16.0,
           endIndent: 16.0,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Text(
             'Category',
             style: TextStyle(fontSize: 14),
@@ -251,36 +234,12 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                  width: mediaWidth * 0.9,
-                  child: DropdownButton(
-                    underline: Container(
-                      height: 0,
-                    ),
-                    isExpanded: true,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    style: TextStyle(
-                        color: AppColors.secondaryColor, fontSize: 16),
-                    value: _category,
-                    onChanged: ((value) {
-                      setState(() {
-                        _category = value.toString();
-                      });
-                    }),
-                    items: _categoryItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )),
-            ],
+          child: Text(
+            widget.recipt.category ?? "",
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.secondaryColor,
+            ),
           ),
         ),
         const Divider(
@@ -289,8 +248,8 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
           indent: 16.0,
           endIndent: 16.0,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Text(
             'Method of payment',
             style: TextStyle(fontSize: 14),
@@ -298,37 +257,12 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                  width: mediaWidth * 0.9,
-                  decoration: BoxDecoration(),
-                  child: DropdownButton(
-                    isExpanded: true,
-                    underline: Container(
-                      height: 0,
-                    ),
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    style: TextStyle(
-                        color: AppColors.secondaryColor, fontSize: 16),
-                    value: _payment,
-                    onChanged: ((value) {
-                      setState(() {
-                        _payment = value.toString();
-                      });
-                    }),
-                    items: _paymentItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )),
-            ],
+          child: Text(
+            widget.recipt.paymentMethod ?? "",
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.secondaryColor,
+            ),
           ),
         ),
         const Divider(
@@ -338,12 +272,38 @@ class _ReceiptDetailsScreenState extends State<ReceiptDetailsScreen> {
           endIndent: 16.0,
         ),
         TextButton(
-            onPressed: () {},
+            onPressed: () {
+              deleteRecipt(widget.recipt);
+            },
             child: const Text(
               'Delete Receipt',
               style: TextStyle(color: Colors.red),
             ))
       ]),
     )));
+  }
+
+  Future<void> deleteRecipt(ReciptModel recipt) async {
+    UIHelper.showLoadingDialog(context, "Deleting Recipt..");
+    await FirebaseFirestore.instance
+        .collection("recipts")
+        .doc(recipt.reciptId)
+        .delete()
+        .then((value) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: AppColors.secondaryColor,
+          duration: Duration(seconds: 1),
+          content: Text("Recipt Deleted Sucessfully!"),
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return const DashboardScreen();
+        }),
+      );
+    });
   }
 }

@@ -41,8 +41,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ScanScreen());
       case '/ExpensesScreen':
         return MaterialPageRoute(builder: (_) => ExpensesScreen());
-      case '/ReceiptDetails':
-        return MaterialPageRoute(builder: (_) => ReceiptDetailsScreen());
+      // case '/ReceiptDetails':
+      //   return MaterialPageRoute(builder: (_) => ReceiptDetailsScreen());
       case '/UsersScreen':
         return MaterialPageRoute(builder: (_) => UsersScreen());
       case '/settingsScreen':

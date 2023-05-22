@@ -8,6 +8,7 @@ import '../helpers/ui_helper.dart';
 import '../models/user_model.dart';
 import '../utils/color_constants.dart';
 import '../utils/route_helper.dart';
+import 'dashboard.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -319,7 +320,8 @@ class RegisterScreenState extends State<RegisterScreen> {
           .set(newUser.toMap())
           .then(
         (value) {
-          verifyPhone(newUser.phoneNo);
+        navigate();
+          // verifyPhone(newUser.phoneNo);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               backgroundColor: AppColors.secondaryColor,
@@ -333,23 +335,30 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   void navigate() {
-    Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.pushReplacement(
+    Navigator.popUntil(context, (route) => route.isFirst);Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const LoginScreen();
+          return const DashboardScreen();
         },
       ),
     );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return OtpScreen();
-        },
-      ),
-    );
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) {
+    //       return const LoginScreen();
+    //     },
+    //   ),
+    // );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) {
+    //       return OtpScreen();
+    //     },
+    //   ),
+    // );
   }
 
   void verifyPhone(number) async {

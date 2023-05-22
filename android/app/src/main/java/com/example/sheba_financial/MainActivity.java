@@ -1,4 +1,4 @@
-package com.webrange.sheba.financial;
+package com.webrange.shebafinancial;
 
 import io.flutter.embedding.android.FlutterActivity;
 

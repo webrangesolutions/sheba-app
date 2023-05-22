@@ -16,6 +16,8 @@ void main() async {
   await NotificationService().requestIOSPermissions();
   await Firebase.initializeApp();
 
+  // Handle deep links
+  
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool showOnboarding = prefs.getBool('onboarding') ?? true;
 

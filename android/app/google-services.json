@@ -1,34 +1,41 @@
 {
   "project_info": {
-    "project_number": "49347299643",
-    "project_id": "sheba-app-f5fbd",
-    "storage_bucket": "sheba-app-f5fbd.appspot.com"
+    "project_number": "205806916918",
+    "project_id": "shebafinancial",
+    "storage_bucket": "shebafinancial.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:49347299643:android:7611cb2977970d34b9cf1e",
+        "mobilesdk_app_id": "1:205806916918:android:f9d77c30677ebfdcee8f97",
         "android_client_info": {
-          "package_name": "com.webrange.sheba.financial"
+          "package_name": "com.webrange.shebafinancial"
         }
       },
       "oauth_client": [
         {
-          "client_id": "49347299643-2cln28795566l0q22honlrls1obkh741.apps.googleusercontent.com",
+          "client_id": "205806916918-95gdof0kd4cqho1d079ftctgrpnj44i3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAQThHIhA3mhvQGfEroNnpwJTecYH-qko0"
+          "current_key": "AIzaSyBObLwFH_AUnEJQjQtlWYjNByTqmvolzRE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "49347299643-2cln28795566l0q22honlrls1obkh741.apps.googleusercontent.com",
+              "client_id": "205806916918-95gdof0kd4cqho1d079ftctgrpnj44i3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "205806916918-2254nqup013vvu77bqrv4acusjievhas.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shebaFinancial"
+              }
             }
           ]
         }

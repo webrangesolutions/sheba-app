@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaHeight = MediaQuery.of(context).size.height;
-    final mediaWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(
@@ -200,10 +199,10 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       credentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      String accessToken = await credentials.user!.getIdToken();
+      // String accessToken = await credentials.user!.getIdToken();
 
-      // Use the access token as needed
-      print('Access token: $accessToken');
+      // // Use the access token as needed
+      // print('Access token: $accessToken');
     } on FirebaseAuthException catch (ex) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -232,19 +231,28 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text("Login successfull!"),
         ),
       );
-      if (userModel.isVerified ?? true) {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return const DashboardScreen();
-            },
-          ),
-        );
-      } else {
-        verifyPhone(userModel.phoneNo);
-      }
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return const DashboardScreen();
+          },
+        ),
+      );
+      // if (userModel.isVerified ?? true) {
+      //   Navigator.popUntil(context, (route) => route.isFirst);
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) {
+      //         return const DashboardScreen();
+      //       },
+      //     ),
+      //   );
+      // } else {
+      //   verifyPhone(userModel.phoneNo);
+      // }
     }
   }
 

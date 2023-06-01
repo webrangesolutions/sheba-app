@@ -18,7 +18,7 @@ class UserInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 50),
-        FittedBox(
+        Expanded(
           child: Text(
             value,
             style: const TextStyle(color: Colors.black, fontSize: 20),

@@ -312,6 +312,7 @@ class RegisterScreenState extends State<RegisterScreen> {
             "https://media.istockphoto.com/id/1209654046/vector/user-avatar-profile-icon-black-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=iPFtOK-2xImeMHaZGUsvZ8HoF2azZ1Q6LYOXfg5sR8I=",
         phoneNo: countryCode + phoneNo,
         companyId: companyId,
+        recipts: [], accessToken: '',
       );
       UserModel.loggedinUser = newUser;
       await FirebaseFirestore.instance
@@ -320,7 +321,7 @@ class RegisterScreenState extends State<RegisterScreen> {
           .set(newUser.toMap())
           .then(
         (value) {
-        navigate();
+          navigate();
           // verifyPhone(newUser.phoneNo);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -335,7 +336,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   void navigate() {
-    Navigator.popUntil(context, (route) => route.isFirst);Navigator.pushReplacement(
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) {

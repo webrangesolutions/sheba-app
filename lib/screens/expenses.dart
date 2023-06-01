@@ -113,9 +113,15 @@ class ExpensesScreenState extends State<ExpensesScreen> {
                                 reciptsSnapshot.docs[index].data()
                                     as Map<String, dynamic>);
 
-                            return ReciptsListCard(
-                              receipt: reciptModel,
-                            );
+                            if (reciptModel.merchant!.contains(searchText)) {
+                              return ReciptsListCard(
+                                receipt: reciptModel,
+                              );
+                            } else {
+                              return Container(
+                                height: 0,
+                              );
+                            }
                           },
                         );
                       } else if (snapshot.hasError) {

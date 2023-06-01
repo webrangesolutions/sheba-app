@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:205806916918:android:f9d77c30677ebfdcee8f97",
+        "mobilesdk_app_id": "1:205806916918:android:71e749cacc0eb9b9ee8f97",
         "android_client_info": {
           "package_name": "com.webrange.shebafinancial"
         }
       },
       "oauth_client": [
         {
-          "client_id": "205806916918-95gdof0kd4cqho1d079ftctgrpnj44i3.apps.googleusercontent.com",
+          "client_id": "205806916918-pv0uglh8e47r3u73gr4ou1vrm0qihmkd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

@@ -17,11 +17,12 @@ void main() async {
   await Firebase.initializeApp();
 
   // Handle deep links
-  
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool showOnboarding = prefs.getBool('onboarding') ?? true;
 
   User? currentUser = FirebaseAuth.instance.currentUser;
+  // runApp(MyApp(showOnboarding: showOnboarding));
   if (currentUser != null) {
     //logged in
     UserModel? thisUserModel =

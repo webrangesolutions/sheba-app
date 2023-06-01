@@ -322,7 +322,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       isVerified: userModel.isVerified,
       profilePic: (imageUrl == '') ? userModel.profilePic : imageUrl,
       phoneNo: phoneNo,
-      companyId: companyId,
+      companyId: companyId, recipts: [], accessToken: '',
     );
     UserModel.loggedinUser = newUser;
     await FirebaseFirestore.instance

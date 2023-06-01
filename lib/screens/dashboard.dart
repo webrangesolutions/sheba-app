@@ -231,7 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 .collection("reminders")
                                 // .where('isCompleted', isEqualTo: true)
                                 .where('uid', isEqualTo: loggedinUser)
-                                .orderBy('dueDate', descending: true)
+                                // .orderBy('dueDate', descending: true)
                                 .snapshots(),
                             builder: (context, snapshot) {
                               print(loggedinUser);
@@ -678,8 +678,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-
-
 class ReciptHomeCard extends StatelessWidget {
   final ReciptModel reciptModel;
   const ReciptHomeCard({
@@ -715,7 +713,7 @@ class ReciptHomeCard extends StatelessWidget {
                 style: const TextStyle(fontSize: 18, color: Colors.grey),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(

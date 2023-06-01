@@ -67,9 +67,9 @@ class ScanScreenState extends State<ScanScreen> {
   String token = '';
   @override
   initState() {
-    // String dateNow = (DateFormat.yMMMMd().format(DateTime.now())).toString();
-    // dateController.text = dateNow;
-    getCode();
+    String dateNow = (DateFormat.yMMMMd().format(DateTime.now())).toString();
+    dateController.text = dateNow;
+    // getCode();
     // getToken();
     super.initState();
   }
@@ -654,8 +654,7 @@ class ScanScreenState extends State<ScanScreen> {
   Future<void> _scanImage() async {
     UIHelper.showLoadingDialog(context, 'Parsing Recipt');
     final navigator = Navigator.of(context);
-    String token =
-        'ya29.a0AWY7CkksZsVG2FrIokP04Ud4cFd4Tu-MCYPkmgaAm19_q4LO2Rq-mTj4K6MA6bCGUAlJXGhQifsH00B6nlO1xB0uDHIBQWGbtY4Uq7jBESlaJCNzah5yfvjnW0bqYoh6wkd6siBtotNon8WOGLFK7EU9mU_ZaCgYKAUUSARISFQG1tDrp5R93iORIhDavx7rtGuurcg0163';
+    String token = UserModel.loggedinUser!.accessToken ?? '';
 
     try {
       List<int> imageBytes = imageFile!.readAsBytesSync();
@@ -682,19 +681,23 @@ class ScanScreenState extends State<ScanScreen> {
           print('${response.statusCode} Search Respons: ${response.body}');
           var responseData = jsonDecode(response.body);
           for (var element in responseData['document']['entities']) {
-            if (element['type'] == 'total_amount') {
+            print('Element: ${element}\n');
+            if (element['type'] == 'receipt_date') {
+              print('in date');
+              totalAmount = element['mentionText'];
+              date = element['mentionText'];
+              setState(() {
+                dateController.text = 'date';
+              });
+            } else if (element['type'] == 'total_amount') {
+              print('in total_amount');
               totalAmount = element['mentionText'];
               total = element['mentionText'];
               setState(() {
                 totalController.text = total;
               });
-            } else if (element['type'] == 'receipt_date') {
-              totalAmount = element['mentionText'];
-              date = element['mentionText'];
-              setState(() {
-                dateController.text = date;
-              });
             } else if (element['type'] == 'supplier_name') {
+              print('in supplier_name');
               totalAmount = element['normalizedValue']['text'];
               total = element['normalizedValue']['text'];
               setState(() {
@@ -829,22 +832,19 @@ class ScanScreenState extends State<ScanScreen> {
       //   );
 
       // WebViewWidget(controller: controller);
-      
 
       return '';
     } catch (e) {
       print("errorr${e.toString()}");
       return '';
     }
-    
   }
-  void _launchAuthorizationUrl(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
-  }
-}
 
-  
+  void _launchAuthorizationUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

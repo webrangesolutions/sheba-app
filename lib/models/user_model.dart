@@ -6,19 +6,21 @@ class UserModel {
   String? companyId;
   String? role;
   String? phoneNo;
+  String? accessToken;
   List? recipts;
   bool? isVerified;
 
   UserModel({
-    this.uid,
-    this.fullName,
-    this.email,
-    this.profilePic,
-    this.companyId,
-    this.role,
-    this.phoneNo,
-    this.recipts,
-    this.isVerified,
+    required this.uid,
+    required this.fullName,
+    required this.email,
+    required this.profilePic,
+    required this.companyId,
+    required this.role,
+    required this.phoneNo,
+    required this.recipts,
+    required this.isVerified,
+    required this.accessToken,
   });
 
   UserModel.fromMap(Map<String, dynamic> map) {
@@ -31,6 +33,7 @@ class UserModel {
     phoneNo = map["phoneNo"];
     recipts = map["recipts"];
     isVerified = map["isVerified"];
+    accessToken = map["accessToken"];
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +47,7 @@ class UserModel {
       "phoneNo": phoneNo,
       "recipts": recipts,
       "isVerified": isVerified,
+      "accessToken": accessToken,
     };
   }
 
